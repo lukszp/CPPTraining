@@ -31,4 +31,18 @@ class CInventory {
     return false;
   }
 
+  list<CInstrument> search(CInstrumentSpec searchedSpec)
+    {
+      list<CInstrument>::iterator it;
+      list<CInstrument> results;
+
+      for (it=m_instruments.begin(); it != m_instruments.end(); it++)
+        {
+
+          if (it->getSpec().matches(searchedSpec)) results.push_back(*it);
+        }
+
+      return results;
+    }
+
 };

@@ -6,23 +6,33 @@ using namespace std;
 class CInstrumentSpec {
  
  private:
-  map<string, string> m_properities;
+  map<string, string>* m_ptr_properities;
  
  public:
 
-  CInstrumentSpec(map<string, string> properities): m_properities(properities) { }
+  CInstrumentSpec(map<string, string> properities) 
+    {
+      m_ptr_properities = new map<string,string>(properities);
+    }
   
-  CInstrumentSpec(const CInstrumentSpec& orig) { m_properities = orig.m_properities; }
+  CInstrumentSpec(const CInstrumentSpec& orig) 
+    { 
+      m_ptr_properities = new map<string,string>(*(orig.m_ptr_properities));      
+    }
+
+  ~CInstrumentSpec() {
+    delete m_ptr_properities;
+  }
 
   //return selected property
   bool getProperty(string property, string& propertyValue) {
     //prepare iterator
     map<string, string>::iterator it;
     //find selected property
-    it = m_properities.find(property);    
+    it = m_ptr_properities->find(property);    
     //if property has not been found then iterator points
     //to the end
-    if(it  == m_properities.end())
+    if(it  == m_ptr_properities->end())
     {
       return false;
     }
@@ -36,7 +46,7 @@ class CInstrumentSpec {
 
   //return map of properties
   map<string,string>* getProperties() {
-    return &m_properities;
+    return m_ptr_properities;
   }
 
   bool matches(CInstrumentSpec spec)
@@ -60,7 +70,7 @@ class CInstrumentSpec {
         currentPropertyKey = it->first;
         currentPropertyValue = it->second;
         //iterate through current spec
-        for (m_it=m_properities.begin(); m_it != m_properities.end(); m_it++)
+        for (m_it=m_ptr_properities->begin(); m_it != m_ptr_properities->end(); m_it++)
           {
             //if property name is different than searched one leave this iteration
             if (m_it->first != currentPropertyKey) continue;
